@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 基本元数据设置 -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青稞高密keep截图生成</title>
+    <!-- 外部样式表引用 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="body">
+    <!-- 页面右下角 - 重新显示弹窗的链接 -->
+      <div style="position: fixed; bottom: 15px; right: 15px; font-size: 13px; z-index: 999;">
+          <!-- 重置弹窗设置的链接，点击时调用resetPopupSettings()函数 -->
+          <a href="#" onclick="resetPopupSettings(); return false;" 
+             style="color: #4CAF50; 
+                    text-decoration: none; 
+                    padding: 8px 15px; 
+                    border: 1px solid #4CAF50; 
+                    border-radius: 6px; 
+                    background-color: rgba(255, 255, 255, 0.9); 
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+                    transition: all 0.3s; 
+                    display: inline-block;"
+             onmouseover="this.style.backgroundColor='#f0f9f0'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.15)'; this.style.transform='translateY(-2px)';"
+             onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.9)'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)'; this.style.transform='translateY(0)';">显示欢迎弹窗</a>
+      </div>
+    <!-- 欢迎弹窗结构 开始 -->
+    <div id="welcomePopup" class="popup-overlay"><!-- 弹窗遮罩层 -->
+        <div class="popup-content"><!-- 弹窗内容容器 -->
+            <!-- 弹窗头部区域 -->
+            <div class="popup-header">
+                <h3>欢迎使用</h3>
+                <span class="popup-close" onclick="closePopup()">&times;</span><!-- 关闭按钮 -->
+            </div>
+            
+            <!-- 弹窗主体内容区域 -->
+            <div class="popup-body">
+                <p>欢迎使用青稞高密keep截图生成工具！</p>
+                <p>本工具可以帮助您生成自定义的keep运动截图，您可以：</p>
+                <!-- 功能列表 -->
+                <ul>
+                    <li>自定义背景图片和轨迹</li>
+                    <li>设置运动数据（里程、速度等）</li>
+                    <li>调整日期和时间</li>
+                    <li>添加个性化用户名和标题</li>
+                </ul>
+                
+                <!-- 版本和版权信息区域 -->
+                <div class="version-info">
+                    <p>当前版本：v2.3.0</p>
+					<b>更新日志</b>
+					<br/>
+					<b>修复自定义背景图与绘制轨迹的冲突</b>
+					<br/>
+                    <p>© 2024-2026 RF极客日志 保留所有权利</p>
+                </div>
+            </div>
+            
+            <!-- 弹窗底部区域 -->
+            <div class="popup-footer">
+                <!-- 不再显示选项 -->
+                <label>
+                    <input type="checkbox" id="doNotShowAgain"> 不再显示此提示
+                </label>
+                <!-- 确认按钮 -->
+                <button onclick="closePopup()">开始使用</button>
+            </div>
+        </div>
+    </div>
+    <!-- 欢迎弹窗结构 结束 -->
+    <div id="main-div">
+        <div id="new-Img" class="new-img">
+            <div class="bgimgwrap" id="bgimgwrap">
+                <img src="" class="innerbgimg" id="bg-img" />
+            </div>
+            <img src="" id="gui-img" />
+            <div class="portrait-wrap" id="portrait-wrap">
+                <img class="portrait" id="portrait" src="" />
+            </div>
+            <div class="weather-imgwrap">
+                <img class="weather" id="weather" src="" />
+            </div>
+            <span class="username" id="username">UserName</span>
+            <span class="keep-title" id="keep-title">户外跑步</span>
+            <span class="mile"><span id="mile" class="mile-data">0.00</span><span class="gongli">公里</span></span>
+            <span class="datetime date" id="date">0000/00/00</span>
+            <span class="datetime time" id="time">00:00</span>
+            <span class="env temperature" id="temperature">00</span>
+            <span class="env humidity" id="humidity">00</span>
+            <span class="speed-time speed" id="speed">00'00"</span>
+            <span class="speed-time cost-time" id="cost-time">00:00:00</span>
+            <span class="speed-time calorie" id="calorie">0</span>
+        </div>
+    <div class="set-data">
+            <h4>数据设置</h4>
+            <ul class="setDataList">
+                <li>
+                    <label>用户名：</label>
+                    <input id="inpt_username" onchange="setData()" type="text" class="username-inp">
+                </li>
+                <li>
+                    <label>头像：</label>
+                    <button onclick="inpt_portrait_onClick()" class="inpt-btn">选择图片</button>
+                    <input style="display:none;" type="file" accept="image/*" id="inpt_portrait" onchange="portrait_inpt()" />
+                    <button onclick="init_portrait()" class="init-btn", id="setpt_reset_btn">恢复默认</button>
+                </li>
+                <li>
+                    <label>标题：</label>
+                    <span>keep•</span>
+                    <input id="inpt_keep_title" onchange="setData()" type="text" class="keep-title-inp">
+                </li>
+                <hr />
+                <li>
+                    <label>公里：</label>
+                    <input type="number" min="0" max="20" id="inpt_miles" onchange="setData()" class="mile2-inp">
+                </li>
+                <li>
+                    <label>配速：</label>
+                    <input id="inpt_speeds" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>日期：</label>
+                    <input id="inpt_date" onchange="setDateFromDatePicker()" type="date" class="date-inp">
+                </li>
+                <li>
+                    <label>时间：</label>
+                    <input id="inpt_time" onchange="setTimeFromTimePicker()" type="time" class="time-picker-inp">
+                </li>
+                <li>
+                    <label>天气：</label>
+                    <select onchange="weather_Select_onChange()" id="weather_Select">
+                        <option value="images/weather1.png">晴</option>
+                        <option value="images/weather2.png">多云</option>
+                        <option value="images/weather3.png">阴天</option>
+                    </select>
+                </li>
+                <li>
+                    <label>温度：</label>
+                    <input id="inpt_temperature" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>湿度：</label>
+                    <input id="inpt_humidity" onchange="setData()" type="text">
+                </li>
+                <hr />
+                <li>
+                    <label>背景：</label>
+                    <select onchange="default_bgImgSelect_onChange()" id="default_bgImgSelect">
+                        <option value="guiji_Select_1">全校</option>
+                        <option value="guiji_Select_2">操场</option>
+                        <option value="guiji_Select_3">其他</option>
+                    </select>
+                </li>
+                <li>
+                    <label>自定义背景：</label>
+                    <button onclick="inpt_bgimg_onClick()">选择图片</button>
+                    <input style="display:none;" type="file" accept="image/*" id="inpt_bgimg" onchange="bgimg_inpt()" />
+                    <button onclick="init_bgimg()" class="init-btn", id="setbgimg_reset_btn">恢复默认</button>
+                </li>
+                <li>
+                    <label>预设轨迹：</label>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_1" class="guijiSelect">
+                        <option value='["images/bg1_1.png", "images/bg1_empty.png"]'>预设1</option>
+                        <option value='["images/bg1_empty.png", "images/bg1_empty.png"]'>空</option>
+                    </select>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_2" class="guijiSelect">
+                        <option value='["images/bg2_1.png", "images/bg2_empty.png"]'>预设1</option>
+                        <option value='["images/bg2_empty.png", "images/bg2_empty.png"]'>空</option>
+                    </select>
+                    <select onchange="guijiSelect_onChange()" id="guiji_Select_3" class="guijiSelect">
+                        <option value='["images/bg3_1.png", "images/bg3_empty.png"]'>预设1</option>
+                        <option value='["images/bg3_empty.png", "images/bg3_empty.png"]'>空</option>
+                    </select>
+                </li>
+                <li>
+                    <label>绘制轨迹：</label>
+                    <button onclick="inpt_drawbtn_onClick()">点击绘制</button>
+                </li>
+                <li>
+                    <label>路径变色：</label>
+                    <input type="checkbox" id="inpt_colorchange_checkbox" onchange="inpt_colorchange_checkbox_onchange()" /><span>启用</span>
+                </li>
+                <li id="bs_prop_inpt_wrap">
+                    <label>变色概率：</label>
+                    <input id="inpt_bs_prob" onchange="setData()" type="text">
+                </li>
+                <li id="inpt_bs_range_wrap">
+                    <label>变色步长范围：</label>
+                    <input id="inpt_bs_range_min" onchange="setData()" type="text">
+                    <span>~</span>
+                    <input id="inpt_bs_range_max" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <label>图片宽度：</label>
+                    <input id="inpt_savePic_width" onchange="setData()" type="text">
+                </li>
+                <li>
+                    <button onclick="Download(Download1)" class="large-btn">保存图片</button>
+                </li>
+                <li>
+                    <button onclick="Download(Download2)">查看图片</button>
+                </li>
+                <li>
+                    <button onclick="Download(Download3)">保存图片</button>
+                    <span>(备用方案)</span>
+                </li>
+                <li>
+                    <button onclick="Download(Download4)">保存图片</button>
+                    <span>(备用方案2, 请手动重命名下载文件)</span>
+                </li>
+            </ul>
+            <div id="drawpic_overlay">
+                <div class="drawpic_popup">
+                    <div><h5>绘制轨迹</h5></div>
+                        <div id="drawpic_canvas_wrap2">
+                            <div id="drawpic_canvas_wrap">
+                                <canvas id="drawpic_canvas" width="1" height="1"></canvas>
+                            </div>
+                        </div>
+                    <div>
+                        <button onclick="drawpic_hidebtn_onClick()">取消</button>
+                        <button onclick="drawpic_initbtn_onClick()" class="init-btn", id="drawcanvas_reset_btn">重置</button>
+                        <button onclick="drawpic_yesbtn_onClick()">确定</button>
+                    </div>
+                    <canvas id="buffer_canvas" style="display: none;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="warning-wrap">
+            <ul class="setDataList">
+                <li>
+                    <div class="warning">
+                        <span>
+                            <b>免责声明: 页面仅供学习交流，请勿用于其他用途，否则后果作者概不负责！</b>
+                        </span>
+                     </br>
+					 </br>
+					    <span>
+					        <b>站长：<a href="https://itrf.cn" target="_blank">水寒凌</a> 邮箱：<a href="mailto:a@mail.itrf.cn">a@mail.itrf.cn </a></b>
+							</br>
+							<b>程序作者：<a href="https://itrf.cn" target="_blank">水寒凌</a> 开源地址：<a href="https://github.com/itrfcn/keep" target="_blank">Github</a></b>
+					    </span>
+                    </div>
+                    <div class="explanation">
+                        <h1>使用教程</h1>
+                        <span>1. 修改"数据设置"部分的输入框中的内容即可更改截图中出现的各项数值.</span>
+                        <span>2. 点击"保存图片"即可自动生成截图并保存到本地.</span>
+                        <br />
+                    </div>
+                   <div class="zanzhu">
+                       <h1>赞助</h1>
+                       <span>赞助费将用于缴纳服务器租金</span>
+                       <br/>
+                       <img src= "images/wx.jpg" />
+                       <img src= "images/zfb.jpg" />
+                   </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="./html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

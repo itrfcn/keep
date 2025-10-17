@@ -1,0 +1,623 @@
+@font-face {
+    font-family: 'keeprun';
+    src: url(./DINCond-Bold.otf);
+}
+html,
+body {
+    width: 100%;
+    position: relative;
+    background-color: #f0f2f5;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+image {
+    max-width: none;
+    max-height: none;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+li {
+    list-style: none;
+}
+hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+ /* 弹窗遮罩层 - 覆盖整个屏幕并提供半透明背景 */
+.popup-overlay {
+    display: none;              /* 默认隐藏 */
+    position: fixed;           /* 固定定位 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);  /* 半透明黑色背景 */
+    z-index: 1000;            /* 确保在其他元素之上 */
+    justify-content: center;   /* 水平居中 */
+    align-items: center;       /* 垂直居中 */
+    backdrop-filter: blur(3px); /* 背景模糊效果 */
+}
+
+/* 弹窗内容容器 */
+.popup-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;        /* 圆角边框 */
+    max-width: 520px;
+    width: 85%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 阴影效果 */
+    animation: popupFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 弹出动画 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 微妙的边框 */
+}
+
+/* 弹窗动画定义 */
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); } /* 初始状态 */
+    to { opacity: 1; transform: translateY(0) scale(1); }          /* 最终状态 */
+}
+
+/* 弹窗头部样式 */
+.popup-header {
+    display: flex;
+    justify-content: space-between; /* 两端对齐 */
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0; /* 底部分隔线 */
+    padding-bottom: 15px;
+}
+
+/* 弹窗标题样式 */
+.popup-header h3 {
+    margin: 0;
+    color: #2E7D32;             /* Keep品牌绿色 */
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;      /* 字间距 */
+}
+
+/* 关闭按钮样式 */
+.popup-close {
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    color: #999;
+    transition: all 0.3s;       /* 过渡动画 */
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;         /* 圆形按钮 */
+}
+
+/* 关闭按钮悬停效果 */
+.popup-close:hover {
+    color: #333;
+    background-color: #f0f0f0;  /* 悬停背景色 */
+}
+
+/* 弹窗内容区域样式 */
+.popup-body {
+    margin-bottom: 25px;
+    line-height: 1.6;           /* 行高 */
+    color: #444;
+    font-size: 15px;
+}
+
+/* 内容区域第一段落样式 */
+.popup-body p:first-child {
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+/* 内容区域列表样式 */
+.popup-body ul {
+    margin-top: 15px;
+    padding-left: 25px;
+}
+
+/* 列表项样式 */
+.popup-body li {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+/* 列表项前的勾选图标 */
+.popup-body li:before {
+    content: '✓';               /* 勾选符号 */
+    color: #4CAF50;            /* Keep绿色 */
+    position: absolute;
+    left: -20px;               /* 定位到列表项左侧 */
+    font-weight: bold;
+}
+
+/* 弹窗底部区域样式 */
+.popup-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 2px solid #f0f0f0;  /* 顶部分隔线 */
+}
+
+/* 按钮样式 */
+.popup-footer button {
+    background-color: #4CAF50;     /* Keep绿色背景 */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;          /* 过渡动画 */
+    font-weight: 500;
+    font-size: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* 轻微阴影 */
+}
+
+/* 按钮悬停效果 */
+.popup-footer button:hover {
+    background-color: #45a049;      /* 深绿色 */
+    transform: translateY(-2px);   /* 上浮效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);  /* 增强阴影 */
+}
+
+/* 按钮点击效果 */
+.popup-footer button:active {
+    transform: translateY(0);      /* 取消上浮 */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);  /* 减弱阴影 */
+}
+
+/* 复选框标签样式 */
+.popup-footer label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #555;
+    font-size: 14px;
+    user-select: none;            /* 防止文本被选中 */
+}
+
+/* 复选框样式 */
+.popup-footer input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: #4CAF50;        /* 复选框选中颜色 */
+}
+
+/* 版本信息区域样式 */
+.version-info {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #ddd;  /* 虚线分隔 */
+    font-size: 13px;
+    color: #777;                  /* 浅灰色文本 */
+    text-align: center;
+}
+
+/* 版本信息段落样式 */
+.version-info p {
+    margin: 5px 0;
+}
+#main-div {
+    max-width: 1500px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+#main-div .new-img {
+    width: 360px;
+    height: 719px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.new-img #gui-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 360px;
+    height: 719px;
+    vertical-align: top;
+}
+.new-img .bgimgwrap {
+    width: 360px;
+    height: 719px;
+    position: absolute;
+    display: flex;
+    overflow: hidden;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.new-img .innerbgimg {
+    width: 360px;
+    height: 719px;
+    margin: 0 auto;
+    display: flex;
+}
+.new-img .portrait-wrap {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    display: flex;
+    overflow: hidden;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    top: 335px;
+    left: 284px;
+    border-radius: 20px;
+}
+.new-img .portrait {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    display: block;
+}
+.new-img .weather-imgwrap {
+    height: 14px;
+    width: 14px;
+    top: 426.5px;
+    left: 238px;
+    position: absolute;
+    display: flex;
+    overflow: hidden;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.new-img .weather {
+    width: 14px;
+    height: 14px;
+    margin: 0 auto;
+    display: block;
+}
+.new-img span {
+    position: absolute;
+}
+.username {
+    top: 385px;
+    right: 34px;
+    font-size: 13px;
+}
+.keep-title {
+    top: 361px;
+    left: 30px;
+    line-height: 16px;
+    color: #a2a2a2;
+    font-size: 12px;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+.mile {
+    color: #57525d;
+    font-family: 'keeprun';
+    top: 387px;
+    left: 32px;
+}
+.mile .mile-data {
+    font-size: 50px;
+    transform: scale(1, 0.85);
+    transform-origin: 0 0;
+    margin: 0 auto;
+    letter-spacing: -1px;
+    display: inline-block;
+    position: relative;
+}
+.mile .gongli {
+    color: #57525d;
+    font-size: 10.67px;
+    font-family: 'keeprun';
+    margin-left: 5px;
+    bottom: 8px;
+    position: relative;
+    display: inline-block;
+}
+.datetime {
+    color: #a2a2a2;
+    font-size: 13px;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+.date {
+    top: 407px;
+    left: 222px;
+}
+.time {
+    top: 407px;
+    left: 296px;
+}
+.env {
+    color: #a2a2a2;
+    font-size: 13px;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    letter-spacing: -0.5px;
+}
+.temperature {
+    top: 424px;
+    left: 252px;
+}
+.humidity {
+    top: 424px;
+    left: 303px;
+}
+.speed-time {
+    color: #58505b;
+    font-size: 28px;
+    font-family: 'keeprun';
+    transform: scale(1, 0.85);
+}
+.speed {
+    top: 480px;
+    left: 32px;
+    letter-spacing: -0.5px;
+}
+.cost-time {
+    top: 480px;
+    left: 140px;
+    letter-spacing: -0.5px;
+}
+.calorie {
+    top: 480px;
+    right: 32px;
+}
+
+/* 统一数据设置和教程模块大小 */
+.set-data, .warning-wrap {
+    background: #fff;
+    padding: 15px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+}
+
+input {
+    height: 26px;
+	width: 48px;
+    padding-left: 6px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+input:focus-visible {
+    outline: none;
+    border-color: #24c68a;
+    box-shadow: 0 0 0 3px rgba(36, 198, 138, 0.2);
+}
+.username-inp, .keep-title-inp {
+    width: 100px;
+}
+.date-inp, .time-picker-inp {
+    width: 140px;
+}
+.time-inp {
+    width: 28px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.year-inp {
+    width: 40px;
+}
+button {
+    width: 75px;
+    height: 28px;
+    background-color: #24c68a;
+    color: #fff;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button:hover {
+    background-color: #1fa873;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.large-btn {
+    width: 100%;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.init-btn {
+    background-color: #c6c6c6;
+}
+.init-btn:hover {
+    background-color: #b0b0b0;
+}
+.set-data h4,
+.set-data h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+}
+.setDataList li {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+}
+.setDataList label {
+    width: 90px;
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+}
+.warning-wrap .setDataList li {
+    display: block;
+}
+select {
+    width: 75px;
+    height: 28px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    padding: 0 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+select:focus-visible {
+    outline: none;
+    border-color: #24c68a;
+    box-shadow: 0 0 0 3px rgba(36, 198, 138, 0.2);
+}
+.guijiSelect {
+    display: none;
+}
+.explanation h1, .zanzhu h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+.warning {
+    font-size: 15px;
+    line-height: 1.7;
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.warning b {
+    color: #fa8c16;
+}
+.explanation {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-top: 20px;
+}
+.explanation span {
+    display: block;
+    margin-bottom: 8px;
+}
+.explanation a, .warning a {
+    text-decoration: none;
+    color: #1890ff;
+    font-weight: 500;
+}
+.explanation a:hover, .warning a:hover {
+    text-decoration: underline;
+}
+.zanzhu {
+    margin-top: 20px;
+}
+.zanzhu img{
+    width: 150px;
+    height: auto;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+#inpt_colorchange_checkbox {
+    width: 20px;
+    height: 20px;
+    background-color: #24c68a;
+    color: #fff;
+    border-radius: 9px;
+    line-height: 16px;
+    border: 2px solid #c5e4a4;
+    font-size: 16px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+#drawpic_overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: none;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#drawpic_overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.drawpic_popup {
+    background-color: #ffffff;
+    text-align: center;
+    padding: 15px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+#drawpic_overlay.active .drawpic_popup {
+    transform: scale(1);
+}
+#drawpic_canvas_wrap {
+    background-color: #fff;
+    position: relative;
+    height: 600px;
+    width: 300px;
+    position: absolute;
+    display: flex;
+    overflow: hidden;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+#drawpic_canvas_wrap2 {
+    background-color: #fff;
+    position: relative;
+    border: 2px solid #999;
+    height: 300px;
+    width: 300px;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .setDataList li {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .setDataList label {
+        flex-basis: 100%;
+    }
+
+    .zanzhu {
+        text-align: center;
+    }
+
+    .zanzhu img {
+        width: 45%;
+        max-width: 180px;
+    }
+}
